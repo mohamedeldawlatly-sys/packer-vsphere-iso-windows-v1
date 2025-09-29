@@ -1,0 +1,58 @@
+[dmgr]
+WebSphere-1 ansible_host=192.168.1.100
+
+[was_servers]
+WebSphere-2 ansible_host=192.168.1.101 servers="['server1']"
+WebSphere-3 ansible_host=192.168.1.102 servers="['server2']"
+
+[all:vars]
+ansible_user=Administrator
+ansible_password=LocalAdmin123
+ansible_connection=winrm
+ansible_winrm_server_cert_validation=ignore
+ansible_winrm_transport=basic
+ansible_winrm_port=5985
+
+# WebSphere Version Configuration
+was_version=9.0.5.0
+was_type=ND
+
+# WebSphere Repository URLs (Update with your HTTP server)
+iim_repository_url=http://192.168.1.200/installation
+was_repository_url=http://192.168.1.200/was/9.0.5
+was_fixes_repository_url=http://192.168.1.200/was/9.0.5/FP015
+
+# WebSphere Configuration
+was_username=wsadmin
+was_password=WebSphereAdmin123
+dmgr_hostname=WebSphere-1
+was_domain_name=.company.local
+domain_name=.company.local
+
+# Installation Paths
+tmp_dir=/opt/IBM/Binaries
+iim_install_location=/opt/IBM/InstallationManager
+was_install_location=/opt/IBM/WebSphere/AppServer
+imshared_location=/opt/IBM/IMShared
+
+[dmgr:vars]
+profile_name=Dmgr01
+# LDAP Configuration (Optional - for AD integration)
+ldap_server=dc01.company.local
+ldap_alias=company_ldap
+ldap_repo=LDAP_COMPANY
+ldap_bind_user=CN=ldapuser,CN=Users,DC=company,DC=local
+ldap_bind_pass=LdapPassword123
+ldap_realm=CN=Users,DC=company,DC=local
+
+[was_servers:vars]
+profile_name=AppSrv01
+
+# WebSphere Version Matrix
+# Supported versions:
+# was_version=9.0.5.0 (Recommended - Latest)
+# was_version=8.5.5.0 (Legacy Support)
+#
+# Supported types:
+# was_type=ND (Network Deployment - Multi-server)
+# was_type=BASE (Base/Express - Single server)

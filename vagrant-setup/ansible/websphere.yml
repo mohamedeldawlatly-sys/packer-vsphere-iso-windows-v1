@@ -1,0 +1,32 @@
+---
+- name: Install WebSphere Application Server
+  hosts: websphere_servers
+  gather_facts: no
+  tasks:
+    
+    - name: Download WebSphere installer from OneDrive
+      win_get_url:
+        url: "{{ websphere_installer_url }}"
+        dest: "C:\\temp\\websphere_installer.exe"
+      
+    - name: Create WebSphere installation directory
+      win_file:
+        path: "C:\\IBM\\WebSphere"
+        state: directory
+    
+    - name: Install WebSphere silently
+      win_command: |
+        C:\temp\websphere_installer.exe -silent -acceptLicense 
+        -installLocation "C:\IBM\WebSphere\AppServer"
+      
+    - name: Create WebSphere profile
+      win_command: |
+        "C:\IBM\WebSphere\AppServer\bin\manageprofiles.bat" -create 
+        -templatePath "C:\IBM\WebSphere\AppServer\profileTemplates\default" 
+        -profileName AppSrv01 -profilePath "C:\IBM\WebSphere\AppServer\profiles\AppSrv01"
+      
+    - name: Start WebSphere server
+      win_service:
+        name: "IBM WebSphere Application Server V9.0 - AppSrv01"
+        state: started
+        start_mode: auto

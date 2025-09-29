@@ -1,0 +1,59 @@
+Vagrant.configure("2") do |config|
+  
+  # Domain Controller
+  config.vm.define "dc01" do |dc|
+    dc.vm.box = "gusztavvargadr/windows-server-2019-standard"
+    dc.vm.hostname = "dc01"
+    dc.vm.network "private_network", ip: "192.168.56.10"
+    
+    dc.vm.provider "virtualbox" do |vb|
+      vb.memory = "2048"
+      vb.cpus = 2
+      vb.name = "WindowsDC01"
+    end
+    
+    dc.vm.provision "shell", inline: <<-SHELL
+      # Install AD Domain Services
+      Install-WindowsFeature -Name AD-Domain-Services -IncludeManagementTools
+      
+      # Create new forest/domain
+      $SafeModePassword = ConvertTo-SecureString "P@ssw0rd123" -AsPlainText -Force
+      Install-ADDSForest -DomainName "company.local" -SafeModeAdministratorPassword $SafeModePassword -Force
+    SHELL
+  end
+  
+  # WebSphere Application Server
+  config.vm.define "websphere01" do |was|
+    was.vm.box = "gusztavvargadr/windows-server-2019-standard"
+    was.vm.hostname = "websphere01"
+    was.vm.network "private_network", ip: "192.168.56.20"
+    
+    was.vm.provider "virtualbox" do |vb|
+      vb.memory = "4096"
+      vb.cpus = 2
+      vb.name = "WebSphere01"
+    end
+    
+    # Join domain after DC is ready
+    was.vm.provision "shell", inline: <<-SHELL
+      # Set DNS to DC
+      netsh interface ip set dns "Ethernet 2" static 192.168.56.10
+      
+      # Wait for DC to be ready
+      Start-Sleep 60
+      
+      # Join domain
+      $domain = "company.local"
+      $username = "company\\Administrator"
+      $password = "vagrant" | ConvertTo-SecureString -AsPlainText -Force
+      $credential = New-Object System.Management.Automation.PSCredential($username, $password)
+      Add-Computer -DomainName $domain -Credential $credential -Restart
+    SHELL
+    
+    # Ansible provisioning for WebSphere
+    was.vm.provision "ansible" do |ansible|
+      ansible.playbook = "ansible/websphere.yml"
+      ansible.inventory_path = "ansible/inventory"
+    end
+  end
+end
