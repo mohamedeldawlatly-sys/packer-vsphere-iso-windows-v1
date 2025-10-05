@@ -42,6 +42,7 @@
           {
             "network": "{{user `vsphere-network`}}",
             "network_card": "vmxnet3"
+
           }
         ],
 
@@ -49,7 +50,8 @@
   
         "iso_paths": [
           "{{user `os_iso_path`}}",
-          "[] /vmimages/tools-isoimages/windows.iso"
+          "[datastore-01] sources/win2019.iso",
+          "[] /usr/lib/vmware/isoimages/windows.iso"
         ],
   
         "floppy_files": [
