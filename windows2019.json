@@ -34,7 +34,12 @@
           {
             "disk_size": "{{user `os-disk-size`}}",
             "disk_thin_provisioned": "{{user `disk-thin-provision`}}"
+          },
+          {
+            "disk_size": "{{user `os-disk-size`}}",
+            "disk_thin_provisioned": "{{user `disk-thin-provision`}}"
           }
+
         ],
         "disk_controller_type": "lsilogic-sas",
           
