@@ -1,0 +1,17 @@
+vm-name               = "Win2019Srv"
+vm-count              = 1
+dns_server_list       = ["200.200.200.2", "200.200.200.5"]
+domain                = "dataserve.com.sa"
+domain_admin_user     = "rancher"
+domain_admin_password = "P@$$w0rd"
+vsphere_user        = "administrator@vsphere.local"
+vsphere_password    = "CloudTeam@2030"
+vsphere_server      = "10.0.0.225"
+local_adminpass      = "P@ssw0rd"
+auto_logon            = true
+vmgateway             = "10.0.0.1"
+vm-ram                = 4096
+vm-cpu                = 2
+windows_template      = "Win2019-Template-Base02"
+ipv4_addresses        = ["10.0.0.79"]
+ipv4_netmasks         = [24]
